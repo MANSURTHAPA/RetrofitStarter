@@ -15,42 +15,49 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+        getSharedPref()
+if (username!="") {
+    CoroutineScope(Dispatchers.Main).launch {
+        delay(1000)
+        try {
 
-        CoroutineScope(Dispatchers.Main).launch {
-            delay(1000)
-            try {
-                getSharedPref()
-                val repo = UserRepository()
-                val response =repo.loginUser(username,password)
-                if (response.success==true){
-                    ServiceBuilder.token="Bearer "+response.token
-                    startActivity(
-                        Intent(
-                            this@SplashActivity,
-                            DashboardActivity::class.java
-                        )
-                    )
-                    finish()
-                }
-                else{
-                    startActivity(
-                        Intent(
-                            this@SplashActivity,
-                            LoginActivity::class.java
-                        )
-                    )
-                }
-            }
-            catch (ex: Exception) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(
+            val repo = UserRepository()
+            val response = repo.loginUser(username, password)
+            if (response.success == true) {
+                startActivity(
+                    Intent(
                         this@SplashActivity,
-                        "Login error", Toast.LENGTH_SHORT
-                    ).show()
-                }
+                        DashboardActivity::class.java
+                    )
+                )
+                finish()
+            } else {
+                startActivity(
+                    Intent(
+                        this@SplashActivity,
+                        LoginActivity::class.java
+                    )
+                )
             }
+        } catch (ex: Exception) {
+            withContext(Dispatchers.Main) {
+                Toast.makeText(
+                    this@SplashActivity,
+                    "Login error", Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
 
 
+    }
+}
+        else{
+    startActivity(
+        Intent(
+            this@SplashActivity,
+            LoginActivity::class.java
+        )
+    )
         }
     }
     private fun getSharedPref() {
